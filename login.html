@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập</title>
+  <style>
+    /* Reset & base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Form container with glassmorphism */
+.container {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 40px 30px;
+  width: 340px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Title */
+h2 {
+  text-align: center;
+  color: white;
+  margin-bottom: 25px;
+  font-size: 26px;
+  letter-spacing: 1px;
+}
+
+/* Input fields */
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 15px;
+  transition: background 0.3s;
+}
+
+input::placeholder {
+  color: #e0e0e0;
+}
+
+input:focus {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 18px;
+  border: none;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #764ba2;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #eeeeee;
+  transform: scale(1.02);
+}
+
+/* Google Button */
+.google-btn {
+  background-color: #db4437;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-btn img {
+  margin-right: 8px;
+  height: 18px;
+}
+
+/* Switch link */
+.switch {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.switch a {
+  color: #ffffff;
+  text-decoration: underline;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Message text */
+#login-message {
+  text-align: center;
+  margin-top: 16px;
+  font-weight: bold;
+  min-height: 24px;
+  color: #fff;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div id="loginForm" class="form active">
+      <h2>Đăng nhập</h2>
+      <input type="email" id="email" placeholder="Email đăng nhập" required />
+      <input type="password" id="password" placeholder="Mật khẩu" required />
+      <button onclick="login()">Đăng nhập</button>
+      <button class="google-btn" id="google-login">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+        Đăng nhập bằng Google
+      </button>
+      <div id="login-message"></div>
+      <div class="switch">
+        <a href="/Register/register.html">Chưa có tài khoản? Đăng ký</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email/Password login -->
+  <script>
+    function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const loginMessage = document.getElementById("login-message");
+
+      if (!email || !password) {
+        loginMessage.style.color = "red";
+        loginMessage.textContent = "Vui lòng nhập đầy đủ thông tin đăng nhập.";
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      const userFound = users.find(user =>
+        user.email === email && user.password === password
+      );
+
+      if (userFound) {
+        loginMessage.textContent = "Đăng nhập thành công";
+        loginMessage.style.color = "green";
+        setTimeout(() => {
+          window.location.href = "/Main/main.html";
+        }, 1000);
+      } else {
+        loginMessage.textContent = "Tên đăng nhập hoặc mật khẩu không đúng.";
+        loginMessage.style.color = "red";
+      }
+    }
+  </script>
+
+  <!-- Firebase Google login -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCBRI19SzUgFoQ-JYCUar4xc78iUWUBrHY",
+  authDomain: "first-login-w--jsi40.firebaseapp.com",
+  projectId: "first-login-w--jsi40",
+  storageBucket: "first-login-w--jsi40.appspot.com",
+  messagingSenderId: "252964980334",
+  appId: "1:252964980334:web:43546bf13cc7c43c95887f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+auth.languageCode = 'it';
+const provider = new GoogleAuthProvider();
+
+window.addEventListener("DOMContentLoaded", () => {
+  const googleLoginButtons = document.getElementsByClassName('google-btn');
+
+  for (let btn of googleLoginButtons) {
+    btn.addEventListener('click', () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          console.log("Đăng nhập Google thành công:", user);
+          // Redirect to the Main folder's main.html
+          window.location.href = "/Main/main.html";
+        })
+        .catch((error) => {
+          console.error("Đăng nhập Google thất bại:", error.message);
+          const loginMessage = document.getElementById("login-message");
+          if (loginMessage) {
+            loginMessage.style.color = "red";
+            loginMessage.textContent = "Lỗi: " + error.message;
+          }
+        });
+    });
+  }
+});
+  </script>
+</body>
+
+</html>
